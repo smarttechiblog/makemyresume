@@ -44,17 +44,19 @@ export default function Home() {
       </div>
 
       {/* Header */}
-      <header className="print:hidden bg-primary text-white p-4 shadow-lg flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">📄 Professional Resume Builder</h1>
-          <p className="text-blue-200 text-sm mt-1">Create your professional resume</p>
+      <header className="print:hidden bg-primary text-white shadow-lg">
+        <div className="flex items-center justify-between px-3 py-3 sm:px-4 sm:py-4 xl:px-6 xl:py-4">
+          <div>
+            <h1 className="text-lg sm:text-2xl xl:text-3xl font-bold">📄 Resume Builder</h1>
+            <p className="text-blue-200 text-xs sm:text-sm mt-0.5 hidden sm:block">Create your professional resume</p>
+          </div>
+          <button
+            onClick={exportToPDF}
+            className="px-3 py-2 sm:px-5 sm:py-2.5 rounded-lg font-semibold text-xs sm:text-sm bg-green-500 text-white hover:bg-green-600 transition-all flex-shrink-0"
+          >
+            📥 Export PDF
+          </button>
         </div>
-        <button
-          onClick={exportToPDF}
-          className="px-5 py-2.5 rounded-lg font-semibold text-sm bg-green-500 text-white hover:bg-green-600 transition-all"
-        >
-          📥 Export PDF
-        </button>
       </header>
 
       {/* Main Content - Template Editor Only */}
