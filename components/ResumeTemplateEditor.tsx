@@ -37,7 +37,11 @@ export default function ResumeTemplateEditor({ data, onChange }: ResumeTemplateE
   });
   const { personalInfo, aiGenerated, education, certifications, skills, languages, projects } = data;
   const previewRef = React.useRef<HTMLDivElement>(null);
+  const tabletPreviewRef = React.useRef<HTMLDivElement>(null);
+  const mobilePreviewRef = React.useRef<HTMLDivElement>(null);
   const [previewScale, setPreviewScale] = React.useState(1);
+  const [tabletPreviewScale, setTabletPreviewScale] = React.useState(1);
+  const [mobilePreviewScale, setMobilePreviewScale] = React.useState(1);
   const [showPreview, setShowPreview] = useState(false);
 
   const toggleSection = (section: Section) => {
@@ -62,6 +66,42 @@ export default function ResumeTemplateEditor({ data, onChange }: ResumeTemplateE
     window.addEventListener('resize', updateScale);
     return () => { observer.disconnect(); window.removeEventListener('resize', updateScale); };
   }, []);
+
+  // Auto-scale tablet preview
+  React.useEffect(() => {
+    const updateScale = () => {
+      if (!tabletPreviewRef.current) return;
+      const containerWidth = tabletPreviewRef.current.parentElement?.clientWidth || 0;
+      const resumeWidthMm = 210;
+      const pxPerMm = 96 / 25.4;
+      const resumeWidthPx = resumeWidthMm * pxPerMm;
+      const padding = 32;
+      const scale = containerWidth > 0 ? Math.min(1, (containerWidth - padding) / resumeWidthPx) : 1;
+      setTabletPreviewScale(scale);
+    };
+    updateScale();
+    const observer = new ResizeObserver(updateScale);
+    if (tabletPreviewRef.current?.parentElement) observer.observe(tabletPreviewRef.current.parentElement);
+    return () => { observer.disconnect(); };
+  }, [showPreview]);
+
+  // Auto-scale mobile preview
+  React.useEffect(() => {
+    const updateScale = () => {
+      if (!mobilePreviewRef.current) return;
+      const containerWidth = mobilePreviewRef.current.parentElement?.clientWidth || 0;
+      const resumeWidthMm = 210;
+      const pxPerMm = 96 / 25.4;
+      const resumeWidthPx = resumeWidthMm * pxPerMm;
+      const padding = 24;
+      const scale = containerWidth > 0 ? Math.min(1, (containerWidth - padding) / resumeWidthPx) : 1;
+      setMobilePreviewScale(scale);
+    };
+    updateScale();
+    const observer = new ResizeObserver(updateScale);
+    if (mobilePreviewRef.current?.parentElement) observer.observe(mobilePreviewRef.current.parentElement);
+    return () => { observer.disconnect(); };
+  }, [showPreview]);
 
   const activeSkills = skills.length > 0 ? skills : defaultSkills;
 
@@ -480,12 +520,12 @@ export default function ResumeTemplateEditor({ data, onChange }: ResumeTemplateE
 
         {/* Editor + Preview */}
         {showPreview ? (
-          <div ref={previewRef} className="p-4 bg-gray-200 flex items-start justify-center">
+          <div ref={tabletPreviewRef} className="p-4 bg-gray-200 flex items-start justify-center">
             <div
               className="shadow-2xl rounded overflow-hidden origin-top"
               style={{
                 width: '210mm',
-                transform: `scale(${Math.min(1, (window.innerWidth - 64) / (210 * 96 / 25.4))})`,
+                transform: `scale(${tabletPreviewScale})`,
                 transformOrigin: 'top center',
               }}
             >
@@ -537,12 +577,12 @@ export default function ResumeTemplateEditor({ data, onChange }: ResumeTemplateE
                 ← Back to Editor
               </button>
             </div>
-            <div ref={previewRef} className="flex items-start justify-center overflow-x-auto">
+            <div ref={mobilePreviewRef} className="flex items-start justify-center overflow-x-auto">
               <div
                 className="shadow-2xl rounded overflow-hidden bg-white"
                 style={{
                   width: '210mm',
-                  transform: `scale(${Math.min(1, (window.innerWidth - 48) / (210 * 96 / 25.4))})`,
+                  transform: `scale(${mobilePreviewScale})`,
                   transformOrigin: 'top left',
                 }}
               >
