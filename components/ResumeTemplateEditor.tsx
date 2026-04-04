@@ -112,7 +112,6 @@ export default function ResumeTemplateEditor({ data, onChange }: ResumeTemplateE
     const set = (updates: Partial<typeof pi>) => onChange({ ...data, personalInfo: { ...pi, ...updates } });
     return (
       <div className="space-y-5">
-        <SectionTitle icon="👤" title="Personal Information" />
         <FormGrid>
           <Field label="Full Name" value={pi.fullName} onChange={v => set({ fullName: v })} placeholder="John Doe" />
           <Field label="Professional Title" value={pi.title} onChange={v => set({ title: v })} placeholder="Senior Software Engineer" />
