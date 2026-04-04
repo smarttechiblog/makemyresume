@@ -13,14 +13,14 @@ import jsPDF from 'jspdf';
 
 const initialResumeData: ResumeData = {
   personalInfo: {
-    fullName: 'VINAY KUMAR BAMMIDI',
-    title: 'Senior Software Engineer',
-    email: 'bammidivinay@gmail.com',
-    phone: '+91 9908728140',
-    location: 'Hyderabad, India',
+    fullName: 'YOUR FULL NAME',
+    title: 'Your Professional Title',
+    email: 'your.email@example.com',
+    phone: '+1 000-000-0000',
+    location: 'City, Country',
     linkedin: '',
     github: '',
-    summary: '18+ years of experience as a Senior Full-Stack Architect specializing in ASP.NET Core, SQL Server, and Azure.\nExpert in Modernization, specifically leading the transition from Monolithic architectures to scalable Microservices.\nAdvanced user of AI-assisted development tools (GitHub Copilot, Claude, Qwen) to increase coding velocity and reliability.\nSpecialist in Cloud-Native solutions, including developing Azure Functions for automated version tracking and deployment visibility.\nDeep domain expertise in Healthcare (ICD coding), E-commerce (Cart systems), and Intellectual Property (IP).\nProficient in Full-Stack development, bridging Backend logic with modern Frontend frameworks like Angular and React.\nStrong Cross-functional collaborator focused on aligning technical roadmaps with business growth and ROI.',
+    summary: 'Brief professional summary highlighting your key experience, skills, and achievements. Focus on what makes you stand out as a professional.',
     photo: ''
   },
   aiGenerated: {

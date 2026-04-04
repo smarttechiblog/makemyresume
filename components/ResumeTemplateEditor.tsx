@@ -53,11 +53,11 @@ export default function ResumeTemplateEditor({ data, onChange }: ResumeTemplateE
       <div className="space-y-5">
         <SectionTitle icon="👤" title="Personal Information" />
         <FormGrid>
-          <Field label="Full Name" value={pi.fullName} onChange={v => set({ fullName: v })} placeholder="Vinay Kumar Bammidi" />
+          <Field label="Full Name" value={pi.fullName} onChange={v => set({ fullName: v })} placeholder="John Doe" />
           <Field label="Professional Title" value={pi.title} onChange={v => set({ title: v })} placeholder="Senior Software Engineer" />
-          <Field label="Email" value={pi.email} onChange={v => set({ email: v })} placeholder="bammidivinay@gmail.com" />
-          <Field label="Phone" value={pi.phone} onChange={v => set({ phone: v })} placeholder="+91 9908728140" />
-          <Field label="Location" value={pi.location} onChange={v => set({ location: v })} placeholder="Hyderabad, India" />
+          <Field label="Email" value={pi.email} onChange={v => set({ email: v })} placeholder="john.doe@example.com" />
+          <Field label="Phone" value={pi.phone} onChange={v => set({ phone: v })} placeholder="+1 000-000-0000" />
+          <Field label="Location" value={pi.location} onChange={v => set({ location: v })} placeholder="City, Country" />
           <Field label="LinkedIn" value={pi.linkedin} onChange={v => set({ linkedin: v })} placeholder="linkedin.com/in/..." />
           <Field label="GitHub" value={pi.github} onChange={v => set({ github: v })} placeholder="github.com/..." />
           <div>
