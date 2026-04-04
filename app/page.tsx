@@ -1,15 +1,9 @@
 'use client';
 
-import React, { useState, useRef } from 'react';
-import PersonalInfoForm from '@/components/PersonalInfoForm';
-import EducationForm from '@/components/EducationForm';
-import SkillsForm from '@/components/SkillsForm';
-import ProjectsForm from '@/components/ProjectsForm';
-import ResumePreview from '@/components/ResumePreview';
+import React, { useState } from 'react';
 import ResumeTemplateEditor from '@/components/ResumeTemplateEditor';
+import ResumePreview from '@/components/ResumePreview';
 import { ResumeData } from '@/types/resume';
-import html2canvas from 'html2canvas';
-import jsPDF from 'jspdf';
 
 const initialResumeData: ResumeData = {
   personalInfo: {
@@ -132,11 +126,6 @@ const initialResumeData: ResumeData = {
 
 export default function Home() {
   const [resumeData, setResumeData] = useState<ResumeData>(initialResumeData);
-  const [activeTab, setActiveTab] = useState<'form' | 'preview'>('form');
-  const [activeSection, setActiveSection] = useState(0);
-  const resumeRef = useRef<HTMLDivElement>(null);
-
-  const tabs = ['AI Summary', 'Personal Info', 'Education & Certs', 'Skills', 'Projects'];
 
   const exportToPDF = () => {
     window.print();
@@ -155,140 +144,20 @@ export default function Home() {
           <h1 className="text-3xl font-bold">📄 Professional Resume Builder</h1>
           <p className="text-blue-200 text-sm mt-1">Create your professional resume</p>
         </div>
-        <div className="flex gap-3">
-          <button
-            onClick={() => setActiveTab('form')}
-            className={`px-5 py-2.5 rounded-lg font-semibold text-sm transition-all ${
-              activeTab === 'form'
-                ? 'bg-secondary text-white shadow'
-                : 'bg-white/20 text-white hover:bg-white/30'
-            }`}
-          >
-            ✏️ Form Editor
-          </button>
-          <button
-            onClick={() => setActiveTab('preview')}
-            className={`px-5 py-2.5 rounded-lg font-semibold text-sm transition-all ${
-              activeTab === 'preview'
-                ? 'bg-secondary text-white shadow'
-                : 'bg-white/20 text-white hover:bg-white/30'
-            }`}
-          >
-            📝 Template Editor
-          </button>
-          <button
-            onClick={exportToPDF}
-            className="px-5 py-2.5 rounded-lg font-semibold text-sm bg-green-500 text-white hover:bg-green-600 transition-all"
-          >
-            📥 Export PDF
-          </button>
-        </div>
+        <button
+          onClick={exportToPDF}
+          className="px-5 py-2.5 rounded-lg font-semibold text-sm bg-green-500 text-white hover:bg-green-600 transition-all"
+        >
+          📥 Export PDF
+        </button>
       </header>
 
-      {/* Main Content */}
-      <div className="print:hidden pb-12">
-        {activeTab === 'form' ? (
-          <div className="max-w-7xl mx-auto mt-6 px-6">
-            <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-              {/* Sidebar */}
-              <div className="lg:col-span-1">
-                <div className="bg-white rounded-lg shadow-lg p-4 sticky top-6">
-                  <h3 className="font-bold text-lg mb-4 text-primary">Sections</h3>
-                  {tabs.map((tab, index) => (
-                    <button
-                      key={index}
-                      onClick={() => setActiveSection(index)}
-                      className={`w-full text-left px-4 py-3 rounded-lg mb-2 transition-all ${
-                        activeSection === index
-                          ? 'bg-secondary text-white font-semibold'
-                          : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
-                      }`}
-                    >
-                      {tab}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Form Content */}
-              <div className="lg:col-span-3">
-                <div className="bg-white rounded-lg shadow-lg p-8">
-                  {activeSection === 0 && (
-                    <div className="space-y-6">
-                      <h2 className="text-2xl font-bold text-primary border-b-2 border-primary pb-2">🤖 AI Summary Builder</h2>
-                      <p className="text-gray-600">Answer a few questions to generate your Professional Summary.</p>
-                      <PersonalInfoForm
-                        data={resumeData.personalInfo}
-                        aiSummaryBullets={resumeData.aiGenerated.summaryBullets}
-                        aiTechnicalProfile={resumeData.aiGenerated.technicalProfile}
-                        aiNotableAchievement={resumeData.aiGenerated.notableAchievement}
-                        onChange={(data) => setResumeData({ ...resumeData, personalInfo: data })}
-                        onAIGeneratedChange={(bullets, profile, achievement) =>
-                          setResumeData({ ...resumeData, aiGenerated: { summaryBullets: bullets, technicalProfile: profile, notableAchievement: achievement } })
-                        }
-                      />
-                    </div>
-                  )}
-                  {activeSection === 1 && (
-                    <PersonalInfoForm
-                      data={resumeData.personalInfo}
-                      aiSummaryBullets={resumeData.aiGenerated.summaryBullets}
-                      aiTechnicalProfile={resumeData.aiGenerated.technicalProfile}
-                      aiNotableAchievement={resumeData.aiGenerated.notableAchievement}
-                      onChange={(data) => setResumeData({ ...resumeData, personalInfo: data })}
-                      onAIGeneratedChange={(bullets, profile, achievement) =>
-                        setResumeData({ ...resumeData, aiGenerated: { summaryBullets: bullets, technicalProfile: profile, notableAchievement: achievement } })
-                      }
-                    />
-                  )}
-                  {activeSection === 2 && (
-                    <EducationForm
-                      education={resumeData.education}
-                      certifications={resumeData.certifications}
-                      onEducationChange={(data) => setResumeData({ ...resumeData, education: data })}
-                      onCertificationsChange={(data) => setResumeData({ ...resumeData, certifications: data })}
-                    />
-                  )}
-                  {activeSection === 3 && (
-                    <SkillsForm
-                      skills={resumeData.skills}
-                      onChange={(data) => setResumeData({ ...resumeData, skills: data })}
-                    />
-                  )}
-                  {activeSection === 4 && (
-                    <ProjectsForm
-                      projects={resumeData.projects}
-                      onChange={(data) => setResumeData({ ...resumeData, projects: data })}
-                    />
-                  )}
-
-                  {/* Navigation Buttons */}
-                  <div className="flex justify-between mt-8 pt-6 border-t">
-                    <button
-                      onClick={() => setActiveSection(Math.max(0, activeSection - 1))}
-                      disabled={activeSection === 0}
-                      className="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed font-semibold"
-                    >
-                      ← Previous
-                    </button>
-                    <button
-                      onClick={() => setActiveSection(Math.min(4, activeSection + 1))}
-                      disabled={activeSection === 4}
-                      className="px-6 py-3 bg-secondary text-white rounded-lg hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed font-semibold"
-                    >
-                      Next →
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        ) : (
-          <ResumeTemplateEditor
-            data={resumeData}
-            onChange={setResumeData}
-          />
-        )}
+      {/* Main Content - Template Editor Only */}
+      <div className="print:hidden">
+        <ResumeTemplateEditor
+          data={resumeData}
+          onChange={setResumeData}
+        />
       </div>
     </div>
   );
