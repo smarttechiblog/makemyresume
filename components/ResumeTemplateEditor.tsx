@@ -135,7 +135,7 @@ export default function ResumeTemplateEditor({ data, onChange }: ResumeTemplateE
 
   const renderSummary = () => (
     <div className="space-y-5">
-      <SectionTitle icon="📝" title="Professional Summary" subtitle="Each line becomes a bullet point in your resume." />
+      <p className="text-sm text-gray-500 -mt-1">Each line becomes a bullet point in your resume.</p>
       <div className="space-y-3">
         {aiGenerated.summaryBullets.map((bullet, i) => (
           <div key={bullet.id} className="flex gap-3 items-start group">
@@ -170,8 +170,7 @@ export default function ResumeTemplateEditor({ data, onChange }: ResumeTemplateE
 
   const renderSkills = () => (
       <div className="space-y-5">
-        <div className="flex items-center justify-between">
-          <SectionTitle icon="🛠️" title="Technical Skills" subtitle="Add skill categories and your expertise." />
+        <div className="flex items-center justify-end">
           <button
             onClick={() => onChange({ ...data, skills: [...(skills.length > 0 ? skills : []), { category: 'New Category', skills: [] }] })}
             className="px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 flex items-center gap-2"
@@ -258,8 +257,7 @@ export default function ResumeTemplateEditor({ data, onChange }: ResumeTemplateE
 
   const renderExperience = () => (
     <div className="space-y-5">
-      <div className="flex items-center justify-between">
-        <SectionTitle icon="💼" title="Work Experience" subtitle="Add your roles in chronological order." />
+      <div className="flex items-center justify-end">
         <button
           onClick={() => onChange({ ...data, projects: [...projects, { id: Date.now().toString(), name: '', client: '', duration: '', role: '', technologies: '', description: '', responsibilities: '' }] })}
           className="px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 flex items-center gap-2"
@@ -295,8 +293,7 @@ export default function ResumeTemplateEditor({ data, onChange }: ResumeTemplateE
 
   const renderEducation = () => (
     <div className="space-y-5">
-      <div className="flex items-center justify-between">
-        <SectionTitle icon="🎓" title="Education" />
+      <div className="flex items-center justify-end">
         <button
           onClick={() => onChange({ ...data, education: [...education, { id: Date.now().toString(), degree: '', institution: '', year: '' }] })}
           className="px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 flex items-center gap-2"
@@ -322,8 +319,7 @@ export default function ResumeTemplateEditor({ data, onChange }: ResumeTemplateE
 
   const renderCertifications = () => (
     <div className="space-y-5">
-      <div className="flex items-center justify-between">
-        <SectionTitle icon="🏆" title="Certifications" />
+      <div className="flex items-center justify-end">
         <button
           onClick={() => onChange({ ...data, certifications: [...certifications, { id: Date.now().toString(), name: '', issuer: '', year: '' }] })}
           className="px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 flex items-center gap-2"
@@ -349,8 +345,7 @@ export default function ResumeTemplateEditor({ data, onChange }: ResumeTemplateE
 
   const renderLanguages = () => (
     <div className="space-y-5">
-      <div className="flex items-center justify-between">
-        <SectionTitle icon="🌐" title="Languages" />
+      <div className="flex items-center justify-end">
         <button
           onClick={() => onChange({ ...data, languages: [...languages, { name: '', proficiency: '' }] })}
           className="px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 flex items-center gap-2"
