@@ -1,0 +1,28 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx *)",
+      "Bash(npm install)",
+      "Bash(npm run *)",
+      "Bash(rmdir *)",
+      "Bash(timeout *)",
+      "Bash(curl *)",
+      "Bash(tasklist *)",
+      "Bash(taskkill *)",
+      "WebFetch(in.linkedin.com)",
+      "WebSearch",
+      "WebFetch(rocketreach.co)",
+      "Bash(python *)",
+      "Bash(pip install *)",
+      "Bash(del *)",
+      "Bash(findstr *)",
+      "Bash(node *)",
+      "Bash(npm uninstall *)",
+      "Bash(type *)",
+      "Bash(git init)",
+      "Bash(git add *)",
+      "Bash(git commit *)"
+    ]
+  },
+  "$version": 3
+}
