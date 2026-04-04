@@ -21,7 +21,17 @@
       "Bash(type *)",
       "Bash(git init)",
       "Bash(git add *)",
-      "Bash(git commit *)"
+      "Bash(git commit *)",
+      "Bash(gh *)",
+      "Bash(msiexec *)",
+      "Bash(refreshenv)",
+      "Bash(\"c:\\\\program files\\\\github cli\\\\gh.exe\" *)",
+      "Bash(cmd *)",
+      "Bash(set *)",
+      "Bash(git stash)",
+      "Bash(git pull *)",
+      "Bash(git push *)",
+      "Bash(git stash *)"
     ]
   },
   "$version": 3

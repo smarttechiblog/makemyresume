@@ -37,7 +37,7 @@ export default function PersonalInfoForm({ data, aiSummaryBullets, aiTechnicalPr
             value={data.fullName}
             onChange={(e) => onChange({ ...data, fullName: e.target.value })}
             className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-secondary"
-            placeholder="John Doe"
+            placeholder="Jane Smith"
           />
         </div>
         <div>
@@ -47,7 +47,7 @@ export default function PersonalInfoForm({ data, aiSummaryBullets, aiTechnicalPr
             value={data.title}
             onChange={(e) => onChange({ ...data, title: e.target.value })}
             className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-secondary"
-            placeholder="Senior .NET Developer"
+            placeholder="Full Stack Developer"
           />
         </div>
         <div>
@@ -57,7 +57,7 @@ export default function PersonalInfoForm({ data, aiSummaryBullets, aiTechnicalPr
             value={data.email}
             onChange={(e) => onChange({ ...data, email: e.target.value })}
             className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-secondary"
-            placeholder="john@example.com"
+            placeholder="jane.smith@email.com"
           />
         </div>
         <div>
@@ -67,7 +67,7 @@ export default function PersonalInfoForm({ data, aiSummaryBullets, aiTechnicalPr
             value={data.phone}
             onChange={(e) => onChange({ ...data, phone: e.target.value })}
             className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-secondary"
-            placeholder="+1 (555) 123-4567"
+            placeholder="+1 (555) 987-6543"
           />
         </div>
         <div>
@@ -77,7 +77,7 @@ export default function PersonalInfoForm({ data, aiSummaryBullets, aiTechnicalPr
             value={data.location}
             onChange={(e) => onChange({ ...data, location: e.target.value })}
             className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-secondary"
-            placeholder="City, State, Country"
+            placeholder="Austin, TX, USA"
           />
         </div>
         <div>
@@ -87,7 +87,7 @@ export default function PersonalInfoForm({ data, aiSummaryBullets, aiTechnicalPr
             value={data.linkedin}
             onChange={(e) => onChange({ ...data, linkedin: e.target.value })}
             className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-secondary"
-            placeholder="linkedin.com/in/johndoe"
+            placeholder="linkedin.com/in/janesmith"
           />
         </div>
         <div>
@@ -97,7 +97,7 @@ export default function PersonalInfoForm({ data, aiSummaryBullets, aiTechnicalPr
             value={data.github}
             onChange={(e) => onChange({ ...data, github: e.target.value })}
             className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-secondary"
-            placeholder="github.com/johndoe"
+            placeholder="github.com/janesmith"
           />
         </div>
         <div>

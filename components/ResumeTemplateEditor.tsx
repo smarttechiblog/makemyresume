@@ -219,10 +219,10 @@ export default function ResumeTemplateEditor({ data, onChange }: ResumeTemplateE
               </button>
             </div>
             <FormGrid>
-              <Field label="Company / Client" value={p.client} onChange={v => { const u = [...projects]; u[idx] = { ...p, client: v }; onChange({ ...data, projects: u }); }} placeholder="ANAQUA LLP." />
-              <Field label="Duration" value={p.duration} onChange={v => { const u = [...projects]; u[idx] = { ...p, duration: v }; onChange({ ...data, projects: u }); }} placeholder="SEP. 2019 TO TILL DATE" />
+              <Field label="Company / Client" value={p.client} onChange={v => { const u = [...projects]; u[idx] = { ...p, client: v }; onChange({ ...data, projects: u }); }} placeholder="TechCorp Solutions" />
+              <Field label="Duration" value={p.duration} onChange={v => { const u = [...projects]; u[idx] = { ...p, duration: v }; onChange({ ...data, projects: u }); }} placeholder="Jan 2020 - Present" />
               <Field label="Role / Title" value={p.role} onChange={v => { const u = [...projects]; u[idx] = { ...p, role: v }; onChange({ ...data, projects: u }); }} placeholder="Senior Software Engineer" />
-              <Field label="Project Name (optional)" value={p.name} onChange={v => { const u = [...projects]; u[idx] = { ...p, name: v }; onChange({ ...data, projects: u }); }} placeholder="AQX Product" />
+              <Field label="Project Name (optional)" value={p.name} onChange={v => { const u = [...projects]; u[idx] = { ...p, name: v }; onChange({ ...data, projects: u }); }} placeholder="Cloud Migration Platform" />
             </FormGrid>
             <FieldBlock label="Project Summary" value={p.description} onChange={v => { const u = [...projects]; u[idx] = { ...p, description: v }; onChange({ ...data, projects: u }); }} rows={3} placeholder="Brief description of the project..." />
             <FieldBlock label="Roles & Responsibilities" value={p.responsibilities} onChange={v => { const u = [...projects]; u[idx] = { ...p, responsibilities: v }; onChange({ ...data, projects: u }); }} rows={6} placeholder="One responsibility per line..." />
@@ -250,9 +250,9 @@ export default function ResumeTemplateEditor({ data, onChange }: ResumeTemplateE
             <button onClick={() => onChange({ ...data, education: education.filter((_, j) => j !== i) })} className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded"><TrashIcon /></button>
           </div>
           <FormGrid>
-            <Field label="Degree" value={edu.degree} onChange={v => { const u = [...education]; u[i] = { ...edu, degree: v }; onChange({ ...data, education: u }); }} placeholder="Bachelor of Technology(ECE)" />
-            <Field label="Institution" value={edu.institution} onChange={v => { const u = [...education]; u[i] = { ...edu, institution: v }; onChange({ ...data, education: u }); }} placeholder="Andhra University" />
-            <Field label="Year" value={edu.year} onChange={v => { const u = [...education]; u[i] = { ...edu, year: v }; onChange({ ...data, education: u }); }} placeholder="2004 - 2008" />
+            <Field label="Degree" value={edu.degree} onChange={v => { const u = [...education]; u[i] = { ...edu, degree: v }; onChange({ ...data, education: u }); }} placeholder="Bachelor of Science in Computer Science" />
+            <Field label="Institution" value={edu.institution} onChange={v => { const u = [...education]; u[i] = { ...edu, institution: v }; onChange({ ...data, education: u }); }} placeholder="State University" />
+            <Field label="Year" value={edu.year} onChange={v => { const u = [...education]; u[i] = { ...edu, year: v }; onChange({ ...data, education: u }); }} placeholder="2016 - 2020" />
           </FormGrid>
         </div>
       ))}
@@ -277,8 +277,8 @@ export default function ResumeTemplateEditor({ data, onChange }: ResumeTemplateE
             <button onClick={() => onChange({ ...data, certifications: certifications.filter((_, j) => j !== i) })} className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded"><TrashIcon /></button>
           </div>
           <FormGrid>
-            <Field label="Certification" value={cert.name} onChange={v => { const u = [...certifications]; u[i] = { ...cert, name: v }; onChange({ ...data, certifications: u }); }} placeholder="AZ - 104" />
-            <Field label="Issuer" value={cert.issuer} onChange={v => { const u = [...certifications]; u[i] = { ...cert, issuer: v }; onChange({ ...data, certifications: u }); }} placeholder="Microsoft" />
+            <Field label="Certification" value={cert.name} onChange={v => { const u = [...certifications]; u[i] = { ...cert, name: v }; onChange({ ...data, certifications: u }); }} placeholder="AWS Solutions Architect" />
+            <Field label="Issuer" value={cert.issuer} onChange={v => { const u = [...certifications]; u[i] = { ...cert, issuer: v }; onChange({ ...data, certifications: u }); }} placeholder="Amazon Web Services" />
             <Field label="Year" value={cert.year} onChange={v => { const u = [...certifications]; u[i] = { ...cert, year: v }; onChange({ ...data, certifications: u }); }} placeholder="2024" />
           </FormGrid>
         </div>
@@ -304,8 +304,8 @@ export default function ResumeTemplateEditor({ data, onChange }: ResumeTemplateE
             <button onClick={() => onChange({ ...data, languages: languages.filter((_, j) => j !== i) })} className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded"><TrashIcon /></button>
           </div>
           <FormGrid>
-            <Field label="Language" value={lang.name} onChange={v => { const u = [...languages]; u[i] = { ...lang, name: v }; onChange({ ...data, languages: u }); }} placeholder="English" />
-            <Field label="Proficiency" value={lang.proficiency} onChange={v => { const u = [...languages]; u[i] = { ...lang, proficiency: v }; onChange({ ...data, languages: u }); }} placeholder="Conversational" />
+            <Field label="Language" value={lang.name} onChange={v => { const u = [...languages]; u[i] = { ...lang, name: v }; onChange({ ...data, languages: u }); }} placeholder="Spanish" />
+            <Field label="Proficiency" value={lang.proficiency} onChange={v => { const u = [...languages]; u[i] = { ...lang, proficiency: v }; onChange({ ...data, languages: u }); }} placeholder="Professional Working" />
           </FormGrid>
         </div>
       ))}
