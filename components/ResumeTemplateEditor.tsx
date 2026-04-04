@@ -35,12 +35,32 @@ export default function ResumeTemplateEditor({ data, onChange }: ResumeTemplateE
     certifications: false,
     languages: false,
   });
-  const [sidebarOpen, setSidebarOpen] = useState(true);
   const { personalInfo, aiGenerated, education, certifications, skills, languages, projects } = data;
+  const previewRef = React.useRef<HTMLDivElement>(null);
+  const [previewScale, setPreviewScale] = React.useState(1);
 
   const toggleSection = (section: Section) => {
     setCollapsedSections(prev => ({ ...prev, [section]: !prev[section] }));
   };
+
+  // Auto-scale preview to fit container
+  React.useEffect(() => {
+    const updateScale = () => {
+      if (!previewRef.current) return;
+      const containerWidth = previewRef.current.parentElement?.clientWidth || 0;
+      const resumeWidthMm = 210;
+      const pxPerMm = 96 / 25.4;
+      const resumeWidthPx = resumeWidthMm * pxPerMm;
+      const padding = 48;
+      const scale = containerWidth > 0 ? Math.min(1, (containerWidth - padding) / resumeWidthPx) : 1;
+      setPreviewScale(scale);
+    };
+    updateScale();
+    const observer = new ResizeObserver(updateScale);
+    if (previewRef.current?.parentElement) observer.observe(previewRef.current.parentElement);
+    window.addEventListener('resize', updateScale);
+    return () => { observer.disconnect(); window.removeEventListener('resize', updateScale); };
+  }, []);
 
   const activeSkills = skills.length > 0 ? skills : defaultSkills;
 
@@ -367,35 +387,13 @@ export default function ResumeTemplateEditor({ data, onChange }: ResumeTemplateE
   };
 
   return (
-    <div className="flex relative" style={{ minHeight: 'calc(100vh - 80px)' }}>
-      {/* Hamburger Toggle Button */}
-      <button
-        onClick={() => setSidebarOpen(!sidebarOpen)}
-        className="fixed top-20 left-3 z-50 p-2 bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-gray-50 transition-colors"
-      >
-        {sidebarOpen ? (
-          <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
-          </svg>
-        ) : (
-          <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-          </svg>
-        )}
-      </button>
-
+    <div className="flex" style={{ minHeight: 'calc(100vh - 80px)' }}>
       {/* Left Sidebar - Section Navigation */}
-      <div
-        className="bg-white border-r border-gray-200 flex-shrink-0 overflow-hidden"
-        style={{
-          width: sidebarOpen ? '224px' : '0px',
-          transition: 'width 0.3s ease-in-out',
-        }}
-      >
-        <div className="p-4 border-b border-gray-100 w-56">
+      <div className="w-56 bg-white border-r border-gray-200 flex-shrink-0 overflow-y-auto">
+        <div className="p-4 border-b border-gray-100">
           <h2 className="text-xs font-bold text-gray-500 uppercase tracking-wider">Sections</h2>
         </div>
-        <nav className="p-2 space-y-0.5 w-56">
+        <nav className="p-2 space-y-0.5">
           {sections.map(s => (
             <div key={s.key} className="group">
               <div className="flex items-center">
@@ -425,21 +423,22 @@ export default function ResumeTemplateEditor({ data, onChange }: ResumeTemplateE
       </div>
 
       {/* Center - Editor */}
-      <div
-        className="overflow-y-auto bg-gray-50 border-r border-gray-200"
-        style={{
-          flex: sidebarOpen ? '0 0 41.66%' : '1 1 auto',
-          transition: 'flex 0.3s ease-in-out',
-        }}
-      >
+      <div className="w-5/12 overflow-y-auto bg-gray-50 border-r border-gray-200">
         <div className="p-6 max-w-2xl mx-auto">
           {renderContent()}
         </div>
       </div>
 
       {/* Right - Live Preview */}
-      <div className="flex-1 overflow-y-auto bg-gray-300 p-6">
-        <div className="mx-auto shadow-2xl rounded overflow-hidden" style={{ width: '210mm' }}>
+      <div ref={previewRef} className="flex-1 overflow-y-auto bg-gray-200 p-6 flex items-start justify-center">
+        <div
+          className="shadow-2xl rounded overflow-hidden origin-top"
+          style={{
+            width: '210mm',
+            transform: `scale(${previewScale})`,
+            transformOrigin: 'top center',
+          }}
+        >
           <ResumePreview data={data} />
         </div>
       </div>
