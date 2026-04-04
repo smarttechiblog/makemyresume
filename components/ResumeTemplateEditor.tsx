@@ -11,14 +11,7 @@ interface ResumeTemplateEditorProps {
 
 type Section = 'personal' | 'summary' | 'skills' | 'experience' | 'education' | 'certifications' | 'languages';
 
-const defaultSkills: Skill[] = [
-  { category: 'Programming Languages & Frameworks', skills: ['.NET Core', 'ASP.NET Core', 'C#', 'Entity Framework', 'LINQ', 'ADO.NET'] },
-  { category: 'Frontend Technologies', skills: ['Angular', 'React', 'TypeScript', 'JavaScript', 'HTML5', 'CSS3', 'Blazor'] },
-  { category: 'Cloud & DevOps', skills: ['Azure', 'Docker', 'Kubernetes', 'CI/CD', 'GitHub Actions'] },
-  { category: 'Databases', skills: ['SQL Server', 'PostgreSQL', 'MySQL', 'Cosmos DB', 'Redis', 'MongoDB'] },
-  { category: 'Architecture & Patterns', skills: ['Microservices', 'RESTful APIs', 'CQRS', 'SOLID Principles', 'Design Patterns'] },
-  { category: 'Tools & Methodologies', skills: ['Visual Studio', 'Git', 'Azure DevOps', 'Jira', 'Agile/Scrum'] },
-];
+const defaultSkills: Skill[] = [];
 
 const sections: { key: Section; label: string; icon: string }[] = [
   { key: 'personal', label: 'Personal Info', icon: '👤' },
@@ -33,14 +26,20 @@ const sections: { key: Section; label: string; icon: string }[] = [
 export default function ResumeTemplateEditor({ data, onChange }: ResumeTemplateEditorProps) {
   const [activeSection, setActiveSection] = useState<Section>('personal');
   const [skillInputs, setSkillInputs] = useState<Record<number, string>>({});
+  const [collapsedSections, setCollapsedSections] = useState<Record<Section, boolean>>({
+    personal: false,
+    summary: false,
+    skills: false,
+    experience: false,
+    education: false,
+    certifications: false,
+    languages: false,
+  });
   const { personalInfo, aiGenerated, education, certifications, skills, languages, projects } = data;
 
-  // Init skills if empty
-  React.useEffect(() => {
-    if (skills.length === 0) {
-      onChange({ ...data, skills: defaultSkills });
-    }
-  }, []);
+  const toggleSection = (section: Section) => {
+    setCollapsedSections(prev => ({ ...prev, [section]: !prev[section] }));
+  };
 
   const activeSkills = skills.length > 0 ? skills : defaultSkills;
 
@@ -111,28 +110,34 @@ export default function ResumeTemplateEditor({ data, onChange }: ResumeTemplateE
   const renderSkills = () => (
       <div className="space-y-5">
         <div className="flex items-center justify-between">
-          <SectionTitle icon="🛠️" title="Technical Skills" subtitle="Add or remove skills for each category." />
+          <SectionTitle icon="🛠️" title="Technical Skills" subtitle="Add skill categories and your expertise." />
           <button
-            onClick={() => onChange({ ...data, skills: [...activeSkills, { category: 'New Category', skills: [] }] })}
+            onClick={() => onChange({ ...data, skills: [...(skills.length > 0 ? skills : []), { category: 'New Category', skills: [] }] })}
             className="px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 flex items-center gap-2"
           >
             <PlusIcon /> Category
           </button>
         </div>
+        {skills.length === 0 && (
+          <div className="text-center py-12 text-gray-400">
+            <p className="text-lg">No skills added yet.</p>
+            <p className="text-sm mt-1">Click "Category" to add your first skill category.</p>
+          </div>
+        )}
         <div className="space-y-4">
-          {activeSkills.map((cat, ci) => (
+          {skills.map((cat, ci) => (
             <div key={ci} className="p-4 bg-gray-50 rounded-xl border border-gray-100">
               <div className="flex items-center gap-2 mb-3">
                 <input
                   value={cat.category}
                   onChange={e => {
-                    const u = [...activeSkills]; u[ci] = { ...u[ci], category: e.target.value };
+                    const u = [...skills]; u[ci] = { ...u[ci], category: e.target.value };
                     onChange({ ...data, skills: u });
                   }}
                   className="flex-1 px-3 py-1.5 border border-gray-200 rounded-lg text-sm font-semibold bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
                 />
                 <button
-                  onClick={() => { const u = activeSkills.filter((_, i) => i !== ci); onChange({ ...data, skills: u }); }}
+                  onClick={() => { const u = skills.filter((_, i) => i !== ci); onChange({ ...data, skills: u }); }}
                   className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
                 >
                   <TrashIcon />
@@ -144,7 +149,7 @@ export default function ResumeTemplateEditor({ data, onChange }: ResumeTemplateE
                     {skill}
                     <button
                       onClick={() => {
-                        const u = [...activeSkills]; u[ci] = { ...u[ci], skills: u[ci].skills.filter((_, j) => j !== si) };
+                        const u = [...skills]; u[ci] = { ...u[ci], skills: u[ci].skills.filter((_, j) => j !== si) };
                         onChange({ ...data, skills: u });
                       }}
                       className="text-gray-400 hover:text-red-500 font-bold"
@@ -165,7 +170,7 @@ export default function ResumeTemplateEditor({ data, onChange }: ResumeTemplateE
                       e.preventDefault();
                       const val = (skillInputs[ci] || '').trim();
                       if (!val) return;
-                      const u = [...activeSkills]; u[ci] = { ...u[ci], skills: [...u[ci].skills, val] };
+                      const u = [...skills]; u[ci] = { ...u[ci], skills: [...u[ci].skills, val] };
                       onChange({ ...data, skills: u });
                       setSkillInputs({ ...skillInputs, [ci]: '' });
                     }
@@ -175,7 +180,7 @@ export default function ResumeTemplateEditor({ data, onChange }: ResumeTemplateE
                   onClick={() => {
                     const val = (skillInputs[ci] || '').trim();
                     if (!val) return;
-                    const u = [...activeSkills]; u[ci] = { ...u[ci], skills: [...u[ci].skills, val] };
+                    const u = [...skills]; u[ci] = { ...u[ci], skills: [...u[ci].skills, val] };
                     onChange({ ...data, skills: u });
                     setSkillInputs({ ...skillInputs, [ci]: '' });
                   }}
@@ -308,15 +313,29 @@ export default function ResumeTemplateEditor({ data, onChange }: ResumeTemplateE
   );
 
   const renderContent = () => {
-    switch (activeSection) {
-      case 'personal': return renderPersonal();
-      case 'summary': return renderSummary();
-      case 'skills': return renderSkills();
-      case 'experience': return renderExperience();
-      case 'education': return renderEducation();
-      case 'certifications': return renderCertifications();
-      case 'languages': return renderLanguages();
-    }
+    const isCollapsed = collapsedSections[activeSection];
+    return (
+      <div>
+        <CollapsibleSection
+          icon={sections.find(s => s.key === activeSection)!.icon}
+          title={sections.find(s => s.key === activeSection)!.label}
+          isCollapsed={isCollapsed}
+          onToggle={() => toggleSection(activeSection)}
+        >
+          {!isCollapsed && (
+            <>
+              {activeSection === 'personal' && renderPersonal()}
+              {activeSection === 'summary' && renderSummary()}
+              {activeSection === 'skills' && renderSkills()}
+              {activeSection === 'experience' && renderExperience()}
+              {activeSection === 'education' && renderEducation()}
+              {activeSection === 'certifications' && renderCertifications()}
+              {activeSection === 'languages' && renderLanguages()}
+            </>
+          )}
+        </CollapsibleSection>
+      </div>
+    );
   };
 
   return (
@@ -328,18 +347,29 @@ export default function ResumeTemplateEditor({ data, onChange }: ResumeTemplateE
         </div>
         <nav className="p-2 space-y-0.5">
           {sections.map(s => (
-            <button
-              key={s.key}
-              onClick={() => setActiveSection(s.key)}
-              className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-all ${
-                activeSection === s.key
-                  ? 'bg-blue-50 text-blue-700 shadow-sm'
-                  : 'text-gray-600 hover:bg-gray-50'
-              }`}
-            >
-              <span>{s.icon}</span>
-              {s.label}
-            </button>
+            <div key={s.key} className="group">
+              <div className="flex items-center">
+                <button
+                  onClick={() => setActiveSection(s.key)}
+                  className={`flex-1 flex items-center gap-2.5 px-3 py-2 rounded-l-lg text-sm font-medium transition-all ${
+                    activeSection === s.key
+                      ? 'bg-blue-50 text-blue-700 shadow-sm'
+                      : 'text-gray-600 hover:bg-gray-50'
+                  }`}
+                >
+                  <span>{s.icon}</span>
+                  {s.label}
+                </button>
+                <button
+                  onClick={() => toggleSection(s.key)}
+                  className={`p-2 rounded-r-lg text-gray-400 hover:text-gray-600 transition-all ${
+                    activeSection === s.key ? 'bg-blue-50' : 'hover:bg-gray-50'
+                  }`}
+                >
+                  <ChevronIcon expanded={!collapsedSections[s.key]} />
+                </button>
+              </div>
+            </div>
           ))}
         </nav>
       </div>
@@ -414,4 +444,51 @@ function PlusIcon() {
 
 function TrashIcon() {
   return <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>;
+}
+
+function ChevronIcon({ expanded }: { expanded: boolean }) {
+  return (
+    <svg
+      className={`w-4 h-4 transition-transform duration-200 ${expanded ? 'rotate-90' : ''}`}
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={2}
+      viewBox="0 0 24 24"
+    >
+      <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+    </svg>
+  );
+}
+
+function CollapsibleSection({
+  icon,
+  title,
+  isCollapsed,
+  onToggle,
+  children,
+}: {
+  icon: string;
+  title: string;
+  isCollapsed: boolean;
+  onToggle: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+      <button
+        onClick={onToggle}
+        className="w-full flex items-center justify-between px-5 py-4 hover:bg-gray-50 transition-colors"
+      >
+        <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+          <span>{icon}</span> {title}
+        </h2>
+        <ChevronIcon expanded={!isCollapsed} />
+      </button>
+      {!isCollapsed && (
+        <div className="px-5 pb-5 border-t border-gray-100 pt-5">
+          {children}
+        </div>
+      )}
+    </div>
+  );
 }

@@ -8,44 +8,7 @@ interface SkillsFormProps {
   onChange: (data: Skill[]) => void;
 }
 
-const defaultSkills: Skill[] = [
-  {
-    category: 'Programming Languages & Frameworks',
-    skills: ['.NET Framework', '.NET Core', 'ASP.NET MVC', 'ASP.NET Web API', 'ASP.NET Core', 'C#', 'VB.NET', 'Entity Framework', 'Entity Framework Core', 'LINQ', 'ADO.NET']
-  },
-  {
-    category: 'Frontend Technologies',
-    skills: ['Angular', 'React', 'TypeScript', 'JavaScript', 'HTML5', 'CSS3', 'Blazor', 'Razor Pages', 'jQuery', 'Bootstrap', 'Tailwind CSS', 'Next.js']
-  },
-  {
-    category: 'Cloud & DevOps',
-    skills: ['Microsoft Azure', 'Google Cloud Platform (GCP)', 'AWS', 'Azure DevOps', 'Docker', 'Kubernetes', 'CI/CD', 'GitHub Actions', 'Terraform', 'ARM Templates']
-  },
-  {
-    category: 'AI & Machine Learning',
-    skills: ['Azure AI Services', 'OpenAI API', 'ML.NET', 'Azure Machine Learning', 'TensorFlow', 'LangChain', 'Semantic Kernel', 'AI Prompt Engineering', 'RAG (Retrieval Augmented Generation)', 'Vector Databases']
-  },
-  {
-    category: 'Databases',
-    skills: ['SQL Server', 'Azure SQL Database', 'PostgreSQL', 'MySQL', 'Cosmos DB', 'Redis', 'MongoDB', 'Elasticsearch']
-  },
-  {
-    category: 'Architecture & Patterns',
-    skills: ['Microservices', 'RESTful APIs', 'GraphQL', 'gRPC', 'Event-Driven Architecture', 'CQRS', 'Domain-Driven Design', 'SOLID Principles', 'Design Patterns', 'Clean Architecture']
-  },
-  {
-    category: 'Messaging & Integration',
-    skills: ['Azure Service Bus', 'Azure Event Grid', 'Azure Event Hubs', 'RabbitMQ', 'Kafka', 'SignalR', 'Azure Logic Apps', 'Azure Functions']
-  },
-  {
-    category: 'Testing & Quality',
-    skills: ['xUnit', 'NUnit', 'MSTest', 'Moq', 'SpecFlow', 'Playwright', 'Selenium', 'Postman', 'SonarQube']
-  },
-  {
-    category: 'Tools & Methodologies',
-    skills: ['Visual Studio', 'VS Code', 'Git', 'Azure Boards', 'Jira', 'Agile/Scrum', 'SAFe', 'OAuth 2.0', 'JWT', 'OpenID Connect']
-  }
-];
+const defaultSkills: Skill[] = [];
 
 export default function SkillsForm({ skills, onChange }: SkillsFormProps) {
   const [selectedSkills, setSelectedSkills] = React.useState<Skill[]>(skills.length > 0 ? skills : defaultSkills);
@@ -82,15 +45,61 @@ export default function SkillsForm({ skills, onChange }: SkillsFormProps) {
     setSelectedSkills(updated);
   };
 
+  const addCategory = () => {
+    const newCategory: Skill = { category: 'New Category', skills: [] };
+    const updated = [...selectedSkills, newCategory];
+    setSelectedSkills(updated);
+  };
+
+  const removeCategory = (categoryIndex: number) => {
+    const updated = selectedSkills.filter((_, i) => i !== categoryIndex);
+    setSelectedSkills(updated);
+  };
+
   return (
     <div className="space-y-4">
-      <h2 className="text-2xl font-bold text-primary border-b-2 border-primary pb-2">Technical Skills</h2>
-      <p className="text-sm text-gray-600">Select or add skills you have experience with. Click on skills to toggle.</p>
-      
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-bold text-primary border-b-2 border-primary pb-2">Technical Skills</h2>
+          <p className="text-sm text-gray-600 mt-2">Add skill categories and your expertise.</p>
+        </div>
+        <button
+          onClick={addCategory}
+          className="px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100"
+        >
+          + Add Category
+        </button>
+      </div>
+
+      {selectedSkills.length === 0 && (
+        <div className="text-center py-12 text-gray-400">
+          <p className="text-lg">No skills added yet.</p>
+          <p className="text-sm mt-1">Click "Add Category" to create your first skill category.</p>
+        </div>
+      )}
+
       <div className="grid grid-cols-1 gap-4">
         {selectedSkills.map((skillCategory, catIndex) => (
           <div key={catIndex} className="p-4 bg-gray-50 rounded-lg border">
-            <h3 className="font-bold text-primary mb-3">{skillCategory.category}</h3>
+            <div className="flex items-center justify-between mb-3">
+              <input
+                type="text"
+                value={skillCategory.category}
+                onChange={(e) => {
+                  const updated = [...selectedSkills];
+                  updated[catIndex] = { ...updated[catIndex], category: e.target.value };
+                  setSelectedSkills(updated);
+                }}
+                className="flex-1 px-3 py-1.5 border border-gray-200 rounded-lg text-sm font-semibold bg-white"
+                placeholder="Category name"
+              />
+              <button
+                onClick={() => removeCategory(catIndex)}
+                className="ml-2 p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded"
+              >
+                ✕
+              </button>
+            </div>
             <div className="flex flex-wrap gap-2">
               {skillCategory.skills.map((skill, skillIndex) => (
                 <span
