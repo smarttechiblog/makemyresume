@@ -43,6 +43,20 @@ export default function ResumeTemplateEditor({ data, onChange }: ResumeTemplateE
   const [tabletPreviewScale, setTabletPreviewScale] = React.useState(1);
   const [mobilePreviewScale, setMobilePreviewScale] = React.useState(1);
   const [showPreview, setShowPreview] = useState(false);
+  const [screenSize, setScreenSize] = useState<'mobile' | 'tablet' | 'desktop'>('desktop');
+
+  // Detect screen size for conditional rendering (avoid triple DOM)
+  React.useEffect(() => {
+    const updateSize = () => {
+      const w = window.innerWidth;
+      if (w >= 1280) setScreenSize('desktop');
+      else if (w >= 768) setScreenSize('tablet');
+      else setScreenSize('mobile');
+    };
+    updateSize();
+    window.addEventListener('resize', updateSize);
+    return () => window.removeEventListener('resize', updateSize);
+  }, []);
 
   const toggleSection = (section: Section) => {
     setCollapsedSections(prev => ({ ...prev, [section]: !prev[section] }));
@@ -424,181 +438,187 @@ export default function ResumeTemplateEditor({ data, onChange }: ResumeTemplateE
   return (
     <div className="min-h-screen bg-gray-100">
       {/* Desktop Layout: Sidebar + Editor + Preview (≥1280px) */}
-      <div className="hidden xl:flex" style={{ minHeight: 'calc(100vh - 80px)' }}>
-        {/* Left Sidebar - Section Navigation */}
-        <div className="w-56 bg-white border-r border-gray-200 flex-shrink-0 overflow-y-auto">
-          <div className="p-4 border-b border-gray-100">
-            <h2 className="text-xs font-bold text-gray-500 uppercase tracking-wider">Sections</h2>
-          </div>
-          <nav className="p-2 space-y-0.5">
-            {sections.map(s => (
-              <div key={s.key} className="group">
-                <div className="flex items-center">
-                  <button
-                    onClick={() => setActiveSection(s.key)}
-                    className={`flex-1 flex items-center gap-2.5 px-3 py-2 rounded-l-lg text-sm font-medium transition-all ${
-                      activeSection === s.key
-                        ? 'bg-blue-50 text-blue-700 shadow-sm'
-                        : 'text-gray-600 hover:bg-gray-50'
-                    }`}
-                  >
-                    <span>{s.icon}</span>
-                    {s.label}
-                  </button>
-                  <button
-                    onClick={() => toggleSection(s.key)}
-                    className={`p-2 rounded-r-lg text-gray-400 hover:text-gray-600 transition-all ${
-                      activeSection === s.key ? 'bg-blue-50' : 'hover:bg-gray-50'
-                    }`}
-                  >
-                    <ChevronIcon expanded={!collapsedSections[s.key]} />
-                  </button>
+      {screenSize === 'desktop' && (
+        <div style={{ minHeight: 'calc(100vh - 80px)' }} className="flex">
+          {/* Left Sidebar - Section Navigation */}
+          <div className="w-56 bg-white border-r border-gray-200 flex-shrink-0 overflow-y-auto">
+            <div className="p-4 border-b border-gray-100">
+              <h2 className="text-xs font-bold text-gray-500 uppercase tracking-wider">Sections</h2>
+            </div>
+            <nav className="p-2 space-y-0.5">
+              {sections.map(s => (
+                <div key={s.key} className="group">
+                  <div className="flex items-center">
+                    <button
+                      onClick={() => setActiveSection(s.key)}
+                      className={`flex-1 flex items-center gap-2.5 px-3 py-2 rounded-l-lg text-sm font-medium transition-all ${
+                        activeSection === s.key
+                          ? 'bg-blue-50 text-blue-700 shadow-sm'
+                          : 'text-gray-600 hover:bg-gray-50'
+                      }`}
+                    >
+                      <span>{s.icon}</span>
+                      {s.label}
+                    </button>
+                    <button
+                      onClick={() => toggleSection(s.key)}
+                      className={`p-2 rounded-r-lg text-gray-400 hover:text-gray-600 transition-all ${
+                        activeSection === s.key ? 'bg-blue-50' : 'hover:bg-gray-50'
+                      }`}
+                    >
+                      <ChevronIcon expanded={!collapsedSections[s.key]} />
+                    </button>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </nav>
-        </div>
-
-        {/* Center - Editor */}
-        <div className="w-5/12 overflow-y-auto bg-gray-50 border-r border-gray-200">
-          <div className="p-6 max-w-2xl mx-auto">
-            {renderContent()}
+              ))}
+            </nav>
           </div>
-        </div>
 
-        {/* Right - Live Preview */}
-        <div ref={previewRef} className="flex-1 overflow-y-auto bg-gray-200 p-6 flex items-start justify-center">
-          <div
-            className="shadow-2xl rounded overflow-hidden origin-top"
-            style={{
-              width: '210mm',
-              transform: `scale(${previewScale})`,
-              transformOrigin: 'top center',
-            }}
-          >
-            <ResumePreview data={data} />
+          {/* Center - Editor */}
+          <div className="w-5/12 overflow-y-auto bg-gray-50 border-r border-gray-200">
+            <div className="p-6 max-w-2xl mx-auto">
+              {renderContent()}
+            </div>
           </div>
-        </div>
-      </div>
 
-      {/* Tablet Layout: Tabs + Editor (768px - 1279px) */}
-      <div className="xl:hidden lg:block">
-        {/* Horizontal Scrollable Tabs */}
-        <div className="sticky top-0 z-40 bg-white border-b border-gray-200 shadow-sm">
-          <div className="flex items-center overflow-x-auto px-2 py-1 gap-1 scrollbar-hide">
-            {sections.map(s => (
-              <button
-                key={s.key}
-                onClick={() => setActiveSection(s.key)}
-                className={`flex-shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-all ${
-                  activeSection === s.key
-                    ? 'bg-blue-50 text-blue-700'
-                    : 'text-gray-600 hover:bg-gray-50'
-                }`}
-              >
-                <span>{s.icon}</span>
-                <span className="whitespace-nowrap">{s.label}</span>
-              </button>
-            ))}
-            <button
-              onClick={() => setShowPreview(!showPreview)}
-              className={`flex-shrink-0 ml-auto flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-all ${
-                showPreview ? 'bg-green-100 text-green-700' : 'text-gray-600 hover:bg-gray-50'
-              }`}
-            >
-              <span>👁️</span>
-              <span>Preview</span>
-            </button>
-          </div>
-        </div>
-
-        {/* Editor + Preview */}
-        {showPreview ? (
-          <div ref={tabletPreviewRef} className="p-4 bg-gray-200 flex items-start justify-center">
+          {/* Right - Live Preview */}
+          <div ref={previewRef} className="flex-1 overflow-y-auto bg-gray-200 p-6 flex items-start justify-center">
             <div
               className="shadow-2xl rounded overflow-hidden origin-top"
               style={{
                 width: '210mm',
-                transform: `scale(${tabletPreviewScale})`,
+                transform: `scale(${previewScale})`,
                 transformOrigin: 'top center',
               }}
             >
               <ResumePreview data={data} />
             </div>
           </div>
-        ) : (
-          <div className="p-4 max-w-3xl mx-auto">
-            {renderContent()}
-          </div>
-        )}
-      </div>
+        </div>
+      )}
 
-      {/* Mobile Layout: Compact Tabs + Editor/Preview Toggle (<768px) */}
-      <div className="lg:hidden">
-        {/* Compact Tab Bar */}
-        <div className="sticky top-0 z-40 bg-white border-b border-gray-200 shadow-sm">
-          <div className="flex items-center overflow-x-auto px-1 py-1 gap-0.5 scrollbar-hide">
-            {sections.map(s => (
+      {/* Tablet Layout: Tabs + Editor (768px - 1279px) */}
+      {screenSize === 'tablet' && (
+        <div>
+          {/* Horizontal Scrollable Tabs */}
+          <div className="sticky top-0 z-40 bg-white border-b border-gray-200 shadow-sm">
+            <div className="flex items-center overflow-x-auto px-2 py-1 gap-1 scrollbar-hide">
+              {sections.map(s => (
+                <button
+                  key={s.key}
+                  onClick={() => setActiveSection(s.key)}
+                  className={`flex-shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+                    activeSection === s.key
+                      ? 'bg-blue-50 text-blue-700'
+                      : 'text-gray-600 hover:bg-gray-50'
+                  }`}
+                >
+                  <span>{s.icon}</span>
+                  <span className="whitespace-nowrap">{s.label}</span>
+                </button>
+              ))}
               <button
-                key={s.key}
-                onClick={() => setActiveSection(s.key)}
-                className={`flex-shrink-0 flex flex-col items-center gap-0.5 px-2 py-1.5 rounded-lg text-xs font-medium transition-all min-w-[56px] ${
-                  activeSection === s.key
-                    ? 'bg-blue-50 text-blue-700'
-                    : 'text-gray-500 hover:bg-gray-50'
+                onClick={() => setShowPreview(!showPreview)}
+                className={`flex-shrink-0 ml-auto flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+                  showPreview ? 'bg-green-100 text-green-700' : 'text-gray-600 hover:bg-gray-50'
                 }`}
               >
-                <span className="text-base">{s.icon}</span>
-                <span className="whitespace-nowrap truncate max-w-[56px]">{s.label}</span>
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Mobile Editor */}
-        {!showPreview ? (
-          <div className="p-3">
-            {renderContent()}
-          </div>
-        ) : (
-          <div className="p-3 bg-gray-200">
-            <div className="flex justify-between items-center mb-3">
-              <h3 className="text-sm font-semibold text-gray-700">Resume Preview</h3>
-              <button
-                onClick={() => setShowPreview(false)}
-                className="px-3 py-1 text-xs font-medium text-gray-600 bg-white rounded-lg border hover:bg-gray-50"
-              >
-                ← Back to Editor
+                <span>👁️</span>
+                <span>Preview</span>
               </button>
             </div>
-            <div ref={mobilePreviewRef} className="flex items-start justify-center overflow-x-auto">
+          </div>
+
+          {/* Editor + Preview */}
+          {showPreview ? (
+            <div ref={tabletPreviewRef} className="p-4 bg-gray-200 flex items-start justify-center">
               <div
-                className="shadow-2xl rounded overflow-hidden bg-white"
+                className="shadow-2xl rounded overflow-hidden origin-top"
                 style={{
                   width: '210mm',
-                  transform: `scale(${mobilePreviewScale})`,
-                  transformOrigin: 'top left',
+                  transform: `scale(${tabletPreviewScale})`,
+                  transformOrigin: 'top center',
                 }}
               >
                 <ResumePreview data={data} />
               </div>
             </div>
-          </div>
-        )}
+          ) : (
+            <div className="p-4 max-w-3xl mx-auto">
+              {renderContent()}
+            </div>
+          )}
+        </div>
+      )}
 
-        {/* Floating Preview Toggle (Mobile) */}
-        {!showPreview && (
-          <button
-            onClick={() => setShowPreview(true)}
-            className="fixed bottom-6 right-6 z-50 p-3 bg-blue-600 text-white rounded-full shadow-lg hover:bg-blue-700 transition-colors"
-          >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-              <path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-            </svg>
-          </button>
-        )}
-      </div>
+      {/* Mobile Layout: Compact Tabs + Editor/Preview Toggle (<768px) */}
+      {screenSize === 'mobile' && (
+        <div>
+          {/* Compact Tab Bar */}
+          <div className="sticky top-0 z-40 bg-white border-b border-gray-200 shadow-sm">
+            <div className="flex items-center overflow-x-auto px-1 py-1 gap-0.5 scrollbar-hide">
+              {sections.map(s => (
+                <button
+                  key={s.key}
+                  onClick={() => setActiveSection(s.key)}
+                  className={`flex-shrink-0 flex flex-col items-center gap-0.5 px-2 py-1.5 rounded-lg text-xs font-medium transition-all min-w-[56px] ${
+                    activeSection === s.key
+                      ? 'bg-blue-50 text-blue-700'
+                      : 'text-gray-500 hover:bg-gray-50'
+                  }`}
+                >
+                  <span className="text-base">{s.icon}</span>
+                  <span className="whitespace-nowrap truncate max-w-[56px]">{s.label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Mobile Editor */}
+          {!showPreview ? (
+            <div className="p-3">
+              {renderContent()}
+            </div>
+          ) : (
+            <div className="p-3 bg-gray-200">
+              <div className="flex justify-between items-center mb-3">
+                <h3 className="text-sm font-semibold text-gray-700">Resume Preview</h3>
+                <button
+                  onClick={() => setShowPreview(false)}
+                  className="px-3 py-1 text-xs font-medium text-gray-600 bg-white rounded-lg border hover:bg-gray-50"
+                >
+                  ← Back to Editor
+                </button>
+              </div>
+              <div ref={mobilePreviewRef} className="flex items-start justify-center overflow-x-auto">
+                <div
+                  className="shadow-2xl rounded overflow-hidden bg-white"
+                  style={{
+                    width: '210mm',
+                    transform: `scale(${mobilePreviewScale})`,
+                    transformOrigin: 'top left',
+                  }}
+                >
+                  <ResumePreview data={data} />
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Floating Preview Toggle (Mobile) */}
+          {!showPreview && (
+            <button
+              onClick={() => setShowPreview(true)}
+              className="fixed bottom-6 right-6 z-50 p-3 bg-blue-600 text-white rounded-full shadow-lg hover:bg-blue-700 transition-colors"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+              </svg>
+            </button>
+          )}
+        </div>
+      )}
     </div>
   );
 }
