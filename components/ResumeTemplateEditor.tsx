@@ -385,13 +385,17 @@ export default function ResumeTemplateEditor({ data, onChange }: ResumeTemplateE
       </button>
 
       {/* Left Sidebar - Section Navigation */}
-      <div className={`bg-white border-r border-gray-200 flex-shrink-0 overflow-y-auto transition-all duration-300 ${
-        sidebarOpen ? 'w-56' : 'w-0'
-      } ${sidebarOpen ? 'mr-0' : '-mr-56'}`}>
-        <div className="p-4 border-b border-gray-100">
+      <div
+        className="bg-white border-r border-gray-200 flex-shrink-0 overflow-hidden"
+        style={{
+          width: sidebarOpen ? '224px' : '0px',
+          transition: 'width 0.3s ease-in-out',
+        }}
+      >
+        <div className="p-4 border-b border-gray-100 w-56">
           <h2 className="text-xs font-bold text-gray-500 uppercase tracking-wider">Sections</h2>
         </div>
-        <nav className="p-2 space-y-0.5">
+        <nav className="p-2 space-y-0.5 w-56">
           {sections.map(s => (
             <div key={s.key} className="group">
               <div className="flex items-center">
@@ -421,9 +425,13 @@ export default function ResumeTemplateEditor({ data, onChange }: ResumeTemplateE
       </div>
 
       {/* Center - Editor */}
-      <div className={`overflow-y-auto bg-gray-50 border-r border-gray-200 transition-all duration-300 ${
-        sidebarOpen ? 'w-5/12' : 'w-1/2'
-      }`}>
+      <div
+        className="overflow-y-auto bg-gray-50 border-r border-gray-200"
+        style={{
+          flex: sidebarOpen ? '0 0 41.66%' : '1 1 auto',
+          transition: 'flex 0.3s ease-in-out',
+        }}
+      >
         <div className="p-6 max-w-2xl mx-auto">
           {renderContent()}
         </div>
