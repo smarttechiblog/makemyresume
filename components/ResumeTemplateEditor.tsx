@@ -35,6 +35,7 @@ export default function ResumeTemplateEditor({ data, onChange }: ResumeTemplateE
     certifications: false,
     languages: false,
   });
+  const [sidebarOpen, setSidebarOpen] = useState(true);
   const { personalInfo, aiGenerated, education, certifications, skills, languages, projects } = data;
 
   const toggleSection = (section: Section) => {
@@ -303,10 +304,37 @@ export default function ResumeTemplateEditor({ data, onChange }: ResumeTemplateE
             <span className="text-sm font-semibold text-gray-500">#{i + 1}</span>
             <button onClick={() => onChange({ ...data, languages: languages.filter((_, j) => j !== i) })} className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded"><TrashIcon /></button>
           </div>
-          <FormGrid>
-            <Field label="Language" value={lang.name} onChange={v => { const u = [...languages]; u[i] = { ...lang, name: v }; onChange({ ...data, languages: u }); }} placeholder="Spanish" />
-            <Field label="Proficiency" value={lang.proficiency} onChange={v => { const u = [...languages]; u[i] = { ...lang, proficiency: v }; onChange({ ...data, languages: u }); }} placeholder="Professional Working" />
-          </FormGrid>
+          <div className="space-y-3">
+            <div>
+              <label className="block text-xs font-medium text-gray-500 mb-1">Language</label>
+              <input
+                type="text"
+                value={lang.name}
+                onChange={e => { const u = [...languages]; u[i] = { ...lang, name: e.target.value }; onChange({ ...data, languages: u }); }}
+                placeholder="Spanish"
+                className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none bg-white"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-gray-500 mb-1">Proficiency</label>
+              <StarRating
+                rating={lang.proficiency === 'Native' ? 5 : lang.proficiency === 'Fluent' ? 4 : lang.proficiency === 'Advanced' ? 3 : lang.proficiency === 'Intermediate' ? 2 : lang.proficiency === 'Beginner' ? 1 : 0}
+                onChange={rating => {
+                  const proficiencyMap: Record<number, string> = {
+                    0: '',
+                    1: 'Beginner',
+                    2: 'Intermediate',
+                    3: 'Advanced',
+                    4: 'Fluent',
+                    5: 'Native'
+                  };
+                  const u = [...languages];
+                  u[i] = { ...lang, proficiency: proficiencyMap[rating] };
+                  onChange({ ...data, languages: u });
+                }}
+              />
+            </div>
+          </div>
         </div>
       ))}
     </div>
@@ -339,9 +367,27 @@ export default function ResumeTemplateEditor({ data, onChange }: ResumeTemplateE
   };
 
   return (
-    <div className="flex" style={{ minHeight: 'calc(100vh - 80px)' }}>
+    <div className="flex relative" style={{ minHeight: 'calc(100vh - 80px)' }}>
+      {/* Hamburger Toggle Button */}
+      <button
+        onClick={() => setSidebarOpen(!sidebarOpen)}
+        className="fixed top-20 left-3 z-50 p-2 bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-gray-50 transition-colors"
+      >
+        {sidebarOpen ? (
+          <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
+          </svg>
+        ) : (
+          <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        )}
+      </button>
+
       {/* Left Sidebar - Section Navigation */}
-      <div className="w-56 bg-white border-r border-gray-200 flex-shrink-0 overflow-y-auto">
+      <div className={`bg-white border-r border-gray-200 flex-shrink-0 overflow-y-auto transition-all duration-300 ${
+        sidebarOpen ? 'w-56' : 'w-0'
+      } ${sidebarOpen ? 'mr-0' : '-mr-56'}`}>
         <div className="p-4 border-b border-gray-100">
           <h2 className="text-xs font-bold text-gray-500 uppercase tracking-wider">Sections</h2>
         </div>
@@ -375,7 +421,9 @@ export default function ResumeTemplateEditor({ data, onChange }: ResumeTemplateE
       </div>
 
       {/* Center - Editor */}
-      <div className="w-5/12 overflow-y-auto bg-gray-50 border-r border-gray-200">
+      <div className={`overflow-y-auto bg-gray-50 border-r border-gray-200 transition-all duration-300 ${
+        sidebarOpen ? 'w-5/12' : 'w-1/2'
+      }`}>
         <div className="p-6 max-w-2xl mx-auto">
           {renderContent()}
         </div>
@@ -489,6 +537,34 @@ function CollapsibleSection({
           {children}
         </div>
       )}
+    </div>
+  );
+}
+
+function StarRating({ rating, onChange }: { rating: number; onChange: (rating: number) => void }) {
+  const labels = ['', 'Beginner', 'Intermediate', 'Advanced', 'Fluent', 'Native'];
+  return (
+    <div className="flex items-center gap-2">
+      <div className="flex gap-1">
+        {[1, 2, 3, 4, 5].map(star => (
+          <button
+            key={star}
+            onClick={() => onChange(star)}
+            className="transition-all hover:scale-110"
+          >
+            <svg
+              className={`w-7 h-7 ${star <= rating ? 'text-yellow-400' : 'text-gray-300'}`}
+              fill="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+            </svg>
+          </button>
+        ))}
+      </div>
+      <span className="text-sm font-medium text-gray-600 min-w-[90px]">
+        {labels[rating] || ''}
+      </span>
     </div>
   );
 }
