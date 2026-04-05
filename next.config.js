@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: 'export',
-  basePath: '/Resumebuilder',
+  basePath: '/makemyresume',
   images: {
     unoptimized: true,
   },
